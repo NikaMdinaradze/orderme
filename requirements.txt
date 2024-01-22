@@ -1,2 +1,6 @@
-fastapi
-uvicorn
+fastapi==0.109.0
+uvicorn==0.26.0
+psycopg==3.1.9
+psycopg-pool==3.1.7
+pydantic-settings==2.1.0
+psycopg_binary
