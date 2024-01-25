@@ -2,8 +2,6 @@ from functools import lru_cache
 
 from pydantic_settings import BaseSettings
 
-
-
 # uncomment to see psycopg.pool logs
 # import logging
 # logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -24,6 +22,3 @@ class Settings(BaseSettings):
 @lru_cache()
 def get_settings():
     return Settings()
-
-print(get_settings().db_name)
-
