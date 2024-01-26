@@ -1,4 +1,4 @@
-- **restaurant_id**: `pk` `integer`
+- **id**: `pk` `integer`
 - **name**: `character varying`
 - **location**: `character varying`
 - **owner_name**: `character varying`

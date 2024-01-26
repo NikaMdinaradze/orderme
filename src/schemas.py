@@ -1,6 +1,10 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
+
+from src.db import get_pool
+
+pool = get_pool()
 
 
 class RestaurantBase(BaseModel):
@@ -13,8 +17,9 @@ class RestaurantPreview(RestaurantBase):
 
 
 class RestaurantCreate(RestaurantBase):
+    contact_number: str
     owner_name: str
-    email: str
+    email: EmailStr
     password: str
 
 
