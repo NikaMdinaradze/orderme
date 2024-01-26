@@ -4,4 +4,4 @@ build:
 
 run:
 	@echo "starting API test server docker"
-	docker-compose up
+	docker-compose run --rm web python src/serve.py migrate&&docker-compose up
