@@ -10,6 +10,22 @@ pool = get_pool()
 
 
 @app.command()
+def get_schemas(table_name: str):
+    with pool.connection() as conn, conn.cursor() as cur:
+        records = cur.execute(
+            """
+        SELECT table_name, column_name, data_type
+        FROM information_schema.columns
+        ORDER BY table_name, ordinal_position;
+        """
+        ).fetchall()
+        for record in records:
+            table, column_name, data_type = record
+            if table == table_name:
+                typer.echo(f"{column_name}, Data Type: {data_type}")
+
+
+@app.command()
 def migrate():
     migrations_folder = "src/migrations"
 
