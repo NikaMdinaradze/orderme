@@ -29,3 +29,10 @@ class RestaurantView(RestaurantPreview):
     password: str
     contact_number: str
     created_at: datetime
+
+
+class RestaurantUpdate(RestaurantBase):
+    contact_number: str
+    owner_name: str
+    email: EmailStr
+    contact_number: str
