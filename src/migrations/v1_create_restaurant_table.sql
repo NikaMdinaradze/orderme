@@ -1,5 +1,5 @@
 CREATE TABLE restaurant (
-    restaurant_id SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     location VARCHAR(255),
     owner_name VARCHAR(100),

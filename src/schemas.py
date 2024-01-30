@@ -36,3 +36,4 @@ class RestaurantUpdate(RestaurantBase):
     owner_name: str
     email: EmailStr
     contact_number: str
+    password: str
