@@ -5,35 +5,60 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from src.db import get_pool
 from src.JWT import create_token
-from src.utils import verify
+from src.schemas.owner import OwnerCreate
+from src.utils import hashing, verify
 
 router = APIRouter()
 pool = get_pool()
+
+
+@router.post("", status_code=status.HTTP_201_CREATED)
+def register(response: OwnerCreate):
+    with pool.connection() as conn:
+        conn.execute(
+            "INSERT INTO owner ("
+            "username,"
+            " email,"
+            " password,"
+            " contact_number,"
+            " picture_url)"
+            "VALUES (%s, %s, %s, %s, %s)",
+            (
+                response.username,
+                response.email,
+                hashing(response.password),  # hashing password
+                response.contact_number,
+                response.picture_url,
+            ),
+        )
+
+    return {"detail": "successfully registered"}
 
 
 @router.post("/login")
 def login(response: OAuth2PasswordRequestForm = Depends()):
     with pool.connection() as conn:
         cur = conn.cursor()
-        user = cur.execute(
-            "SELECT id, password FROM restaurant WHERE email=%s;", (response.username,)
+        owner = cur.execute(
+            "SELECT owner_id, password FROM owner WHERE username=%s;",
+            (response.username,),
         ).fetchone()
-    if not user:
+    if not owner:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="There is no username or password",
+            detail="Username or password is incorrect",
         )
-    user_id, password = user
+    owner_id, password = owner
     if not verify(response.password, password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid password",
         )
     access_token = create_token(
-        {"user_id": user_id, "type": "access"}, timedelta(minutes=5)
+        {"user_id": owner_id, "type": "access"}, timedelta(minutes=5)
     )
     refresh_token = create_token(
-        {"user_id": user_id, "type": "refresh"}, timedelta(days=7)
+        {"user_id": owner_id, "type": "refresh"}, timedelta(days=7)
     )
 
-    return {"access_token": access_token, "refresh_token": refresh_token}
+    return {"Access_token": access_token, "Refresh_token": refresh_token}
