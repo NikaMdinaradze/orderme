@@ -1,8 +1,7 @@
 import os
 from datetime import datetime, timedelta
-from typing import Annotated
 
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 
@@ -21,15 +20,17 @@ def create_token(data: dict, expires_delta: timedelta):
     return encoded_jwt
 
 
-def decode_token(token: Annotated[str, Depends(oauth2_scheme)]):
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
     try:
-        data = jwt.decode(token, SECRET_KEY, ALGORITHM)
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
     except JWTError:
-        raise HTTPException(status_code=400, detail="Invalid Token")
-    if not data:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    return data
+        raise credentials_exception
+    return username

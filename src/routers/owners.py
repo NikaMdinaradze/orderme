@@ -36,29 +36,24 @@ def register(response: OwnerCreate):
 
 
 @router.post("/login")
-def login(response: OAuth2PasswordRequestForm = Depends()):
+def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    username = form_data.username
+
     with pool.connection() as conn:
         cur = conn.cursor()
-        owner = cur.execute(
-            "SELECT owner_id, password FROM owner WHERE username=%s;",
-            (response.username,),
+        result = cur.execute(
+            "SELECT password FROM owner WHERE username=%s;", [username]
         ).fetchone()
-    if not owner:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Username or password is incorrect",
-        )
-    owner_id, password = owner
-    if not verify(response.password, password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid password",
-        )
-    access_token = create_token(
-        {"user_id": owner_id, "type": "access"}, timedelta(minutes=5)
-    )
-    refresh_token = create_token(
-        {"user_id": owner_id, "type": "refresh"}, timedelta(days=7)
-    )
+    password = form_data.password
 
-    return {"Access_token": access_token, "Refresh_token": refresh_token}
+    if not verify(password, result[0]):
+        raise HTTPException(
+            detail="Invalid Credentials", status_code=status.HTTP_400_BAD_REQUEST
+        )
+
+    access_token = create_token(
+        data={"sub": username}, expires_delta=timedelta(minutes=3)
+    )
+    refresh_token = create_token(data={"sub": username}, expires_delta=timedelta(days=7))
+
+    return {"access_token": access_token, "refresh_token": refresh_token}
