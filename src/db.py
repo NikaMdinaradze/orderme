@@ -22,6 +22,6 @@ def get_settings():
 settings = get_settings()
 
 db_url = (
-    f"postgresql://{settings.db_user}:{settings.db_password}@{settings.db_host}:"
+    f"postgres://{settings.db_user}:{settings.db_password}@{settings.db_host}:"
     f"{settings.db_port}/{settings.db_name}"
 )
