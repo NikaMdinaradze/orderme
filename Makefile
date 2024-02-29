@@ -4,11 +4,7 @@ build:
 
 run:
 	@echo "starting API development server docker"
-	docker-compose run --rm web python src/serve.py migrate&&docker-compose up
-
-migrate:
-	@echo "starting migrations"
-	docker-compose run --rm web python src/serve.py migrate
+	docker-compose up
 
 get_requirements:
 	@echo "getting requirements"
