@@ -1,7 +1,5 @@
 from functools import lru_cache
 
-import psycopg
-from psycopg_pool import ConnectionPool
 from pydantic_settings import BaseSettings
 
 
@@ -23,22 +21,7 @@ def get_settings():
 
 settings = get_settings()
 
-conninfo = (
-    f"user={settings.db_user} password={settings.db_password}"
-    f" host={settings.db_host} port={settings.db_port} dbname={settings.db_name}"
+db_url = (
+    f"postgresql://{settings.db_user}:{settings.db_password}@{settings.db_host}:"
+    f"{settings.db_port}/{settings.db_name}"
 )
-
-
-def get_conn():
-    return psycopg.connect(conninfo=conninfo)
-
-
-@lru_cache()
-def get_pool():
-    return ConnectionPool(conninfo=conninfo)
-
-
-# uncomment to see psycopg.pool logs
-# import logging
-# logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-# logging.getLogger("psycopg.pool").setLevel(logging.INFO)

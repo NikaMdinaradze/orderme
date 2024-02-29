@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from src.db import get_pool
 from src.JWT import create_token, refresh_access_token
-from src.schemas.owner import OwnerCreate
+from src.owners.schemas import OwnerCreate
 from src.utils import hashing, verify
 
 router = APIRouter()

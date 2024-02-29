@@ -2,7 +2,7 @@ from fastapi import APIRouter, status
 from psycopg.rows import class_row
 
 from src.db import get_pool
-from src.schemas.restaurant import RestaurantPreview, RestaurantView
+from src.shared.restaurant import RestaurantPreview, RestaurantView
 
 router = APIRouter()
 pool = get_pool()
