@@ -13,9 +13,7 @@ app.include_router(restaurants_router, prefix="/owners", tags=["owners"])
 register_tortoise(
     app,
     db_url=db_url,
-    modules={
-        "models": ["src.owners.models", "src.restaurants.models", "src.shared.models"]
-    },
+    modules={"models": ["src.owners.models"]},
     generate_schemas=True,
     add_exception_handlers=True,
 )
